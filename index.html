@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NinjaGamerz | Full Stack Developer & Gamer</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="NinjaGamerz – Full Stack Developer, Gamer & Content Creator. Expert in HTML, CSS, JS, Node.js, React, MongoDB, Java, Kotlin & more. Check out my projects!" />
+  <meta name="keywords" content="NinjaGamerz, Full Stack Developer, Web Developer, React, Node.js, MongoDB, Java, Kotlin, Minecraft Server, YouTube, Portfolio" />
+  <meta name="author" content="NinjaGamerz" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://ninjagamerz.dev/" />
+
+  <!-- Open Graph / Discord / Social Preview -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ninjagamerz.dev/" />
+  <meta property="og:title" content="NinjaGamerz | Full Stack Developer & Gamer" />
+  <meta property="og:description" content="Full Stack Developer, Gamer & Content Creator. Building epic things with code 🎮" />
+  <meta property="og:image" content="https://ninjagamerz.dev/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="theme-color" content="#00e5ff" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NinjaGamerz | Full Stack Developer & Gamer" />
+  <meta name="twitter:description" content="Full Stack Developer, Gamer & Content Creator. Building epic things with code 🎮" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="64x64" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="dark-mode" id="body">
+
+  <!-- Animated BG Canvas -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-logo">
+      <img src="favicon.png" alt="NinjaGamerz Logo" class="nav-logo-img" />
+      <span class="nav-brand">Ninja<span class="accent">Gamerz</span></span>
+    </div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#youtube">YouTube</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
+        <span class="material-icons-round" id="themeIcon">dark_mode</span>
+      </button>
+      <div class="visitor-badge">
+        <span class="material-icons-round">visibility</span>
+        <span id="visitorCount">---</span>
+      </div>
+    </div>
+    <button class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <div class="hero-avatar-wrap">
+        <div class="avatar-ring"></div>
+        <img src="favicon.png" alt="NinjaGamerz" class="hero-avatar" id="heroAvatar" />
+      </div>
+      <div class="hero-text">
+        <p class="hero-greeting">Hey there! I'm</p>
+        <h1 class="hero-name">Ninja<span class="accent">Gamerz</span></h1>
+        <p class="hero-role">
+          I am a <span class="typewriter" id="typewriter"></span><span class="cursor-blink">|</span>
+        </p>
+        <p class="hero-desc">Full Stack Developer • Gamer • Content Creator • Minecraft Server Builder</p>
+        <div class="hero-btns">
+          <a href="#projects" class="btn btn-primary">
+            <span class="material-icons-round">code</span> My Projects
+          </a>
+          <a href="#contact" class="btn btn-outline">
+            <span class="material-icons-round">discord</span> Contact Me
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span class="material-icons-round">expand_more</span>
+    </div>
+  </section>
+
+  <!-- SKILLS SECTION -->
+  <section class="section skills-section" id="skills">
+    <h2 class="section-title">My <span class="accent">Skills</span></h2>
+    <p class="section-sub">Tech stack that powers my builds</p>
+    <div class="skills-grid">
+      <div class="skill-card" data-skill="HTML5">
+        <span class="material-icons-round skill-icon">web</span>
+        <span>HTML5</span>
+      </div>
+      <div class="skill-card" data-skill="CSS3">
+        <span class="material-icons-round skill-icon">style</span>
+        <span>CSS3</span>
+      </div>
+      <div class="skill-card" data-skill="JavaScript">
+        <span class="material-icons-round skill-icon">javascript</span>
+        <span>JavaScript</span>
+      </div>
+      <div class="skill-card" data-skill="React">
+        <span class="material-icons-round skill-icon">hub</span>
+        <span>React</span>
+      </div>
+      <div class="skill-card" data-skill="Node.js">
+        <span class="material-icons-round skill-icon">terminal</span>
+        <span>Node.js</span>
+      </div>
+      <div class="skill-card" data-skill="Express">
+        <span class="material-icons-round skill-icon">router</span>
+        <span>Express</span>
+      </div>
+      <div class="skill-card" data-skill="MongoDB">
+        <span class="material-icons-round skill-icon">storage</span>
+        <span>MongoDB</span>
+      </div>
+      <div class="skill-card" data-skill="JSON">
+        <span class="material-icons-round skill-icon">data_object</span>
+        <span>JSON</span>
+      </div>
+      <div class="skill-card" data-skill="Java">
+        <span class="material-icons-round skill-icon">coffee</span>
+        <span>Java</span>
+      </div>
+      <div class="skill-card" data-skill="Kotlin">
+        <span class="material-icons-round skill-icon">android</span>
+        <span>Kotlin</span>
+      </div>
+      <div class="skill-card" data-skill="Video Editing">
+        <span class="material-icons-round skill-icon">movie</span>
+        <span>Video Editing</span>
+      </div>
+      <div class="skill-card" data-skill="Minecraft Servers">
+        <span class="material-icons-round skill-icon">sports_esports</span>
+        <span>MC Servers</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS SECTION -->
+  <section class="section projects-section" id="projects">
+    <h2 class="section-title">Featured <span class="accent">Projects</span></h2>
+    <p class="section-sub">Things I've built with passion</p>
+    <div class="projects-grid">
+      <!-- StealSMP Card -->
+      <div class="project-card featured">
+        <div class="project-glow"></div>
+        <div class="project-header">
+          <span class="material-icons-round project-icon">sports_esports</span>
+          <div class="project-badges">
+            <span class="badge badge-live">🟢 Live</span>
+            <span class="badge badge-featured">⭐ Featured</span>
+          </div>
+        </div>
+        <h3 class="project-title">StealSMP</h3>
+        <p class="project-desc">
+          A fully custom Minecraft server running <strong>Lifesteal Mode</strong>. Players lose hearts when they die and steal them from others. Owned by <strong>Golu</strong>, built and managed by me.
+        </p>
+        <div class="project-tags">
+          <span class="tag">Minecraft</span>
+          <span class="tag">Lifesteal</span>
+          <span class="tag">Server Dev</span>
+        </div>
+        <a href="https://stealsmp.vercel.app" target="_blank" rel="noopener" class="btn btn-project">
+          <span class="material-icons-round">open_in_new</span> Visit Site
+        </a>
+      </div>
+
+      <!-- Minecraft Server Dev Card -->
+      <div class="project-card">
+        <div class="project-glow"></div>
+        <div class="project-header">
+          <span class="material-icons-round project-icon">dns</span>
+        </div>
+        <h3 class="project-title">Minecraft Server Dev</h3>
+        <p class="project-desc">
+          Expert in setting up and customizing Minecraft servers — plugins, configs, gamemodes, economy systems and more. I build experiences, not just servers.
+        </p>
+        <div class="project-tags">
+          <span class="tag">Java</span>
+          <span class="tag">Plugins</span>
+          <span class="tag">Server Setup</span>
+        </div>
+      </div>
+
+      <!-- Video Editing Card -->
+      <div class="project-card">
+        <div class="project-glow"></div>
+        <div class="project-header">
+          <span class="material-icons-round project-icon">video_camera_back</span>
+        </div>
+        <h3 class="project-title">Video Editing</h3>
+        <p class="project-desc">
+          Creating engaging gaming content — from raw gameplay to polished YouTube videos. Effects, transitions, thumbnails and storytelling — all handled.
+        </p>
+        <div class="project-tags">
+          <span class="tag">YouTube</span>
+          <span class="tag">Editing</span>
+          <span class="tag">Content</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- YOUTUBE SECTION -->
+  <section class="section youtube-section" id="youtube">
+    <h2 class="section-title">My <span class="accent">YouTube</span></h2>
+    <p class="section-sub">Gaming, tutorials & more</p>
+    <div class="yt-card">
+      <div class="yt-info">
+        <img src="favicon.png" alt="NinjaGamerz YT" class="yt-avatar" />
+        <div>
+          <h3>@ninja_gamerz2692</h3>
+          <p>Gaming • Minecraft • Tutorials</p>
+          <a href="https://youtube.com/@ninja_gamerz2692?si=OYROoZ-4X2OUunsa" target="_blank" rel="noopener" class="btn btn-yt">
+            <span class="material-icons-round">smart_display</span> Visit Channel
+          </a>
+        </div>
+      </div>
+      <div class="yt-embed-wrap">
+        <iframe
+          src="https://www.youtube.com/embed?listType=user_uploads&list=ninja_gamerz2692"
+          title="NinjaGamerz YouTube"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT SECTION -->
+  <section class="section contact-section" id="contact">
+    <h2 class="section-title">Contact <span class="accent">Me</span></h2>
+    <p class="section-sub">Let's connect and build something epic!</p>
+    <div class="contact-cards">
+      <a href="https://discord.com/users/ninjagamerz.exe" target="_blank" rel="noopener" class="contact-card discord-card">
+        <span class="material-icons-round contact-icon">forum</span>
+        <h3>Discord</h3>
+        <p>ninjagamerz.exe</p>
+        <span class="contact-arrow material-icons-round">arrow_forward</span>
+      </a>
+      <a href="https://youtube.com/@ninja_gamerz2692" target="_blank" rel="noopener" class="contact-card yt-contact-card">
+        <span class="material-icons-round contact-icon">smart_display</span>
+        <h3>YouTube</h3>
+        <p>@ninja_gamerz2692</p>
+        <span class="contact-arrow material-icons-round">arrow_forward</span>
+      </a>
+      <a href="https://stealsmp.vercel.app" target="_blank" rel="noopener" class="contact-card mc-card">
+        <span class="material-icons-round contact-icon">sports_esports</span>
+        <h3>StealSMP</h3>
+        <p>stealsmp.vercel.app</p>
+        <span class="contact-arrow material-icons-round">arrow_forward</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>Built with <span class="accent">❤</span> by <strong>NinjaGamerz</strong> &copy; 2025</p>
+    <p class="footer-sub">Full Stack Developer • Gamer • Creator</p>
+  </footer>
+
+  <!-- Easter Egg Modal -->
+  <div class="easter-egg-modal" id="easterEgg">
+    <div class="easter-egg-inner">
+      <div class="ee-emoji">🎮</div>
+      <h2>You Found The Easter Egg!</h2>
+      <p>↑ ↑ ↓ ↓ ← → ← → B A — Konami Code Activated!</p>
+      <p class="ee-sub">NinjaGamerz approves your gaming skills 🥷</p>
+      <button class="btn btn-primary" id="closeEE">Awesome! Close</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
