@@ -1,117 +1,72 @@
-// ===================== THREE.JS 3D BACKGROUND =====================
+// ===================== ANIMATED BG CANVAS =====================
 const canvas = document.getElementById('bgCanvas');
-const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth, window.innerHeight);
+const ctx = canvas.getContext('2d');
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = 5;
+let particles = [];
+const PARTICLE_COUNT = 60;
 
-// ---- Galaxy Particles ----
-const starGeo = new THREE.BufferGeometry();
-const starCount = 3000;
-const positions = new Float32Array(starCount * 3);
-for (let i = 0; i < starCount * 3; i++) {
-  positions[i] = (Math.random() - 0.5) * 40;
-}
-starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-const starMat = new THREE.PointsMaterial({ color: 0x00e5ff, size: 0.05, transparent: true, opacity: 0.7 });
-const stars = new THREE.Points(starGeo, starMat);
-scene.add(stars);
-
-// ---- Floating 3D Skill Cubes ----
-const cubeColors = [0x00e5ff, 0x00b8d4, 0x0097a7, 0x00838f, 0x006064];
-const cubes = [];
-for (let i = 0; i < 8; i++) {
-  const geo = new THREE.BoxGeometry(0.3, 0.3, 0.3);
-  const mat = new THREE.MeshStandardMaterial({
-    color: cubeColors[i % cubeColors.length],
-    wireframe: i % 2 === 0,
-    transparent: true,
-    opacity: 0.6
-  });
-  const cube = new THREE.Mesh(geo, mat);
-  cube.position.set(
-    (Math.random() - 0.5) * 10,
-    (Math.random() - 0.5) * 6,
-    (Math.random() - 0.5) * 4
-  );
-  cube.userData = {
-    rotSpeedX: (Math.random() - 0.5) * 0.02,
-    rotSpeedY: (Math.random() - 0.5) * 0.02,
-    floatSpeed: Math.random() * 0.005 + 0.002,
-    floatOffset: Math.random() * Math.PI * 2
-  };
-  scene.add(cube);
-  cubes.push(cube);
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
 
-// ---- Floating Rings ----
-const rings = [];
-for (let i = 0; i < 4; i++) {
-  const geo = new THREE.TorusGeometry(0.4 + i * 0.3, 0.02, 16, 100);
-  const mat = new THREE.MeshStandardMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.15 + i * 0.05 });
-  const ring = new THREE.Mesh(geo, mat);
-  ring.position.set((Math.random() - 0.5) * 8, (Math.random() - 0.5) * 5, (Math.random() - 0.5) * 3);
-  ring.rotation.x = Math.random() * Math.PI;
-  ring.userData = { rotSpeed: (Math.random() - 0.5) * 0.01 };
-  scene.add(ring);
-  rings.push(ring);
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * 0.4;
+    this.vy = (Math.random() - 0.5) * 0.4;
+    this.r = Math.random() * 1.5 + 0.5;
+    this.alpha = Math.random() * 0.5 + 0.1;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,229,255,${this.alpha})`;
+    ctx.fill();
+  }
 }
 
-// ---- Lighting ----
-const ambientLight = new THREE.AmbientLight(0x00e5ff, 0.3);
-scene.add(ambientLight);
-const pointLight = new THREE.PointLight(0x00e5ff, 1, 20);
-pointLight.position.set(0, 0, 5);
-scene.add(pointLight);
-
-// ---- Mouse Parallax ----
-let mouseX = 0, mouseY = 0;
-document.addEventListener('mousemove', (e) => {
-  mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-  mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-});
-
-// ---- Resize ----
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
-// ---- Animate ----
-let clock = 0;
-function animate3D() {
-  requestAnimationFrame(animate3D);
-  clock += 0.01;
-
-  // Galaxy rotate
-  stars.rotation.y += 0.0003;
-  stars.rotation.x += 0.0001;
-
-  // Cubes float & rotate
-  cubes.forEach((cube, i) => {
-    cube.rotation.x += cube.userData.rotSpeedX;
-    cube.rotation.y += cube.userData.rotSpeedY;
-    cube.position.y += Math.sin(clock + cube.userData.floatOffset) * cube.userData.floatSpeed;
-  });
-
-  // Rings rotate
-  rings.forEach(ring => {
-    ring.rotation.z += ring.userData.rotSpeed;
-    ring.rotation.x += ring.userData.rotSpeed * 0.5;
-  });
-
-  // Mouse parallax
-  camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.05;
-  camera.position.y += (-mouseY * 0.3 - camera.position.y) * 0.05;
-  camera.lookAt(scene.position);
-
-  renderer.render(scene, camera);
+function initParticles() {
+  particles = [];
+  for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
 }
-animate3D();
+
+function drawLines() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 130) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(0,229,255,${0.08 * (1 - dist / 130)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animateBg() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawLines();
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animateBg);
+}
+
+resizeCanvas();
+initParticles();
+animateBg();
+window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
 
 // ===================== NAVBAR SCROLL =====================
 const navbar = document.getElementById('navbar');
