@@ -1,74 +1,117 @@
-// ===================== ANIMATED BG CANVAS =====================
+// ===================== THREE.JS 3D BACKGROUND =====================
 const canvas = document.getElementById('bgCanvas');
-const ctx = canvas.getContext('2d');
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
 
-let particles = [];
-const PARTICLE_COUNT = 60;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 5;
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+// ---- Galaxy Particles ----
+const starGeo = new THREE.BufferGeometry();
+const starCount = 3000;
+const positions = new Float32Array(starCount * 3);
+for (let i = 0; i < starCount * 3; i++) {
+  positions[i] = (Math.random() - 0.5) * 40;
+}
+starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+const starMat = new THREE.PointsMaterial({ color: 0x00e5ff, size: 0.05, transparent: true, opacity: 0.7 });
+const stars = new THREE.Points(starGeo, starMat);
+scene.add(stars);
+
+// ---- Floating 3D Skill Cubes ----
+const cubeColors = [0x00e5ff, 0x00b8d4, 0x0097a7, 0x00838f, 0x006064];
+const cubes = [];
+for (let i = 0; i < 8; i++) {
+  const geo = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+  const mat = new THREE.MeshStandardMaterial({
+    color: cubeColors[i % cubeColors.length],
+    wireframe: i % 2 === 0,
+    transparent: true,
+    opacity: 0.6
+  });
+  const cube = new THREE.Mesh(geo, mat);
+  cube.position.set(
+    (Math.random() - 0.5) * 10,
+    (Math.random() - 0.5) * 6,
+    (Math.random() - 0.5) * 4
+  );
+  cube.userData = {
+    rotSpeedX: (Math.random() - 0.5) * 0.02,
+    rotSpeedY: (Math.random() - 0.5) * 0.02,
+    floatSpeed: Math.random() * 0.005 + 0.002,
+    floatOffset: Math.random() * Math.PI * 2
+  };
+  scene.add(cube);
+  cubes.push(cube);
 }
 
-class Particle {
-  constructor() { this.reset(); }
-  reset() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.vx = (Math.random() - 0.5) * 0.4;
-    this.vy = (Math.random() - 0.5) * 0.4;
-    this.r = Math.random() * 1.5 + 0.5;
-    this.alpha = Math.random() * 0.5 + 0.1;
-  }
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
-      this.reset();
-    }
-  }
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(0,229,255,${this.alpha})`;
-    ctx.fill();
-  }
+// ---- Floating Rings ----
+const rings = [];
+for (let i = 0; i < 4; i++) {
+  const geo = new THREE.TorusGeometry(0.4 + i * 0.3, 0.02, 16, 100);
+  const mat = new THREE.MeshStandardMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.15 + i * 0.05 });
+  const ring = new THREE.Mesh(geo, mat);
+  ring.position.set((Math.random() - 0.5) * 8, (Math.random() - 0.5) * 5, (Math.random() - 0.5) * 3);
+  ring.rotation.x = Math.random() * Math.PI;
+  ring.userData = { rotSpeed: (Math.random() - 0.5) * 0.01 };
+  scene.add(ring);
+  rings.push(ring);
 }
 
-function initParticles() {
-  particles = [];
-  for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
-}
+// ---- Lighting ----
+const ambientLight = new THREE.AmbientLight(0x00e5ff, 0.3);
+scene.add(ambientLight);
+const pointLight = new THREE.PointLight(0x00e5ff, 1, 20);
+pointLight.position.set(0, 0, 5);
+scene.add(pointLight);
 
-function drawLines() {
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i + 1; j < particles.length; j++) {
-      const dx = particles[i].x - particles[j].x;
-      const dy = particles[i].y - particles[j].y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 130) {
-        ctx.beginPath();
-        ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = `rgba(0,229,255,${0.08 * (1 - dist / 130)})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-      }
-    }
-  }
-}
+// ---- Mouse Parallax ----
+let mouseX = 0, mouseY = 0;
+document.addEventListener('mousemove', (e) => {
+  mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+  mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+});
 
-function animateBg() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawLines();
-  particles.forEach(p => { p.update(); p.draw(); });
-  requestAnimationFrame(animateBg);
-}
+// ---- Resize ----
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
 
-resizeCanvas();
-initParticles();
-animateBg();
-window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
+// ---- Animate ----
+let clock = 0;
+function animate3D() {
+  requestAnimationFrame(animate3D);
+  clock += 0.01;
+
+  // Galaxy rotate
+  stars.rotation.y += 0.0003;
+  stars.rotation.x += 0.0001;
+
+  // Cubes float & rotate
+  cubes.forEach((cube, i) => {
+    cube.rotation.x += cube.userData.rotSpeedX;
+    cube.rotation.y += cube.userData.rotSpeedY;
+    cube.position.y += Math.sin(clock + cube.userData.floatOffset) * cube.userData.floatSpeed;
+  });
+
+  // Rings rotate
+  rings.forEach(ring => {
+    ring.rotation.z += ring.userData.rotSpeed;
+    ring.rotation.x += ring.userData.rotSpeed * 0.5;
+  });
+
+  // Mouse parallax
+  camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.05;
+  camera.position.y += (-mouseY * 0.3 - camera.position.y) * 0.05;
+  camera.lookAt(scene.position);
+
+  renderer.render(scene, camera);
+}
+animate3D();
 
 // ===================== NAVBAR SCROLL =====================
 const navbar = document.getElementById('navbar');
@@ -79,11 +122,7 @@ window.addEventListener('scroll', () => {
 // ===================== HAMBURGER MENU =====================
 const hamburger = document.getElementById('hamburger');
 const navLinks = document.getElementById('navLinks');
-
-hamburger.addEventListener('click', () => {
-  navLinks.classList.toggle('open');
-});
-
+hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
 navLinks.querySelectorAll('a').forEach(link => {
   link.addEventListener('click', () => navLinks.classList.remove('open'));
 });
@@ -92,131 +131,69 @@ navLinks.querySelectorAll('a').forEach(link => {
 const body = document.getElementById('body');
 const themeToggle = document.getElementById('themeToggle');
 const themeIcon = document.getElementById('themeIcon');
-
 let isDark = true;
 
 function applyTheme(dark) {
   isDark = dark;
-  if (dark) {
-    body.classList.add('dark-mode');
-    body.classList.remove('light-mode');
-    themeIcon.textContent = 'dark_mode';
-  } else {
-    body.classList.remove('dark-mode');
-    body.classList.add('light-mode');
-    themeIcon.textContent = 'light_mode';
-  }
+  body.classList.toggle('dark-mode', dark);
+  body.classList.toggle('light-mode', !dark);
+  themeIcon.textContent = dark ? 'dark_mode' : 'light_mode';
   localStorage.setItem('ninjagamerz-theme', dark ? 'dark' : 'light');
 }
-
 themeToggle.addEventListener('click', () => applyTheme(!isDark));
-
-// Load saved theme
-const savedTheme = localStorage.getItem('ninjagamerz-theme');
-if (savedTheme === 'light') applyTheme(false);
+if (localStorage.getItem('ninjagamerz-theme') === 'light') applyTheme(false);
 
 // ===================== TYPEWRITER =====================
 const typewriterEl = document.getElementById('typewriter');
-const phrases = [
-  'Full Stack Developer',
-  'Gamer 🎮',
-  'Content Creator',
-  'Minecraft Server Builder',
-  'Problem Solver',
-  'Code Ninja 🥷'
-];
-
-let phraseIndex = 0;
-let charIndex = 0;
-let deleting = false;
-let typeTimeout;
+const phrases = ['Full Stack Developer','Gamer 🎮','Content Creator','Minecraft Server Builder','Problem Solver','Code Ninja 🥷'];
+let phraseIndex = 0, charIndex = 0, deleting = false;
 
 function typeLoop() {
   const current = phrases[phraseIndex];
-  if (!deleting) {
-    typewriterEl.textContent = current.slice(0, charIndex + 1);
-    charIndex++;
-    if (charIndex === current.length) {
-      deleting = true;
-      typeTimeout = setTimeout(typeLoop, 1800);
-      return;
-    }
-  } else {
-    typewriterEl.textContent = current.slice(0, charIndex - 1);
-    charIndex--;
-    if (charIndex === 0) {
-      deleting = false;
-      phraseIndex = (phraseIndex + 1) % phrases.length;
-    }
-  }
-  typeTimeout = setTimeout(typeLoop, deleting ? 60 : 90);
+  typewriterEl.textContent = deleting ? current.slice(0, charIndex - 1) : current.slice(0, charIndex + 1);
+  deleting ? charIndex-- : charIndex++;
+  if (!deleting && charIndex === current.length) { deleting = true; setTimeout(typeLoop, 1800); return; }
+  if (deleting && charIndex === 0) { deleting = false; phraseIndex = (phraseIndex + 1) % phrases.length; }
+  setTimeout(typeLoop, deleting ? 60 : 90);
 }
 typeLoop();
 
 // ===================== VISITOR COUNTER =====================
 const visitorCountEl = document.getElementById('visitorCount');
-
-(function updateVisitorCount() {
-  let count = parseInt(localStorage.getItem('ninjagamerz-visitors') || '1247');
-  if (!localStorage.getItem('ninjagamerz-visited')) {
-    count++;
-    localStorage.setItem('ninjagamerz-visitors', count);
-    localStorage.setItem('ninjagamerz-visited', '1');
-  }
-  // Animate counter
-  let current = 0;
-  const step = Math.ceil(count / 60);
-  const timer = setInterval(() => {
-    current = Math.min(current + step, count);
-    visitorCountEl.textContent = current.toLocaleString();
-    if (current >= count) clearInterval(timer);
-  }, 30);
-})();
+let count = parseInt(localStorage.getItem('ninjagamerz-visitors') || '1247');
+if (!localStorage.getItem('ninjagamerz-visited')) {
+  count++;
+  localStorage.setItem('ninjagamerz-visitors', count);
+  localStorage.setItem('ninjagamerz-visited', '1');
+}
+let current = 0;
+const step = Math.ceil(count / 60);
+const timer = setInterval(() => {
+  current = Math.min(current + step, count);
+  visitorCountEl.textContent = current.toLocaleString();
+  if (current >= count) clearInterval(timer);
+}, 30);
 
 // ===================== KONAMI CODE EASTER EGG =====================
 const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
 let konamiProgress = 0;
 const easterEgg = document.getElementById('easterEgg');
-const closeEE = document.getElementById('closeEE');
-
 document.addEventListener('keydown', (e) => {
-  if (e.key === KONAMI[konamiProgress]) {
-    konamiProgress++;
-    if (konamiProgress === KONAMI.length) {
-      easterEgg.classList.add('active');
-      konamiProgress = 0;
-    }
-  } else {
-    konamiProgress = 0;
-  }
+  konamiProgress = e.key === KONAMI[konamiProgress] ? konamiProgress + 1 : 0;
+  if (konamiProgress === KONAMI.length) { easterEgg.classList.add('active'); konamiProgress = 0; }
 });
+document.getElementById('closeEE').addEventListener('click', () => easterEgg.classList.remove('active'));
+easterEgg.addEventListener('click', (e) => { if (e.target === easterEgg) easterEgg.classList.remove('active'); });
 
-closeEE.addEventListener('click', () => easterEgg.classList.remove('active'));
-easterEgg.addEventListener('click', (e) => {
-  if (e.target === easterEgg) easterEgg.classList.remove('active');
-});
-
-// ===================== CARD HOVER GLOW =====================
-document.querySelectorAll('.skill-card, .project-card, .contact-card').forEach(card => {
-  card.addEventListener('mousemove', (e) => {
-    const rect = card.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
-    const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
-    card.style.setProperty('--mouse-x', x + '%');
-    card.style.setProperty('--mouse-y', y + '%');
-  });
-});
-
-// ===================== INTERSECTION OBSERVER (Reveal) =====================
+// ===================== SCROLL REVEAL =====================
 const revealEls = document.querySelectorAll('.skill-card, .project-card, .contact-card, .section-title, .yt-card');
-
 const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry, i) => {
+  entries.forEach((entry) => {
     if (entry.isIntersecting) {
       const delay = (entry.target.dataset.index || 0) * 60;
       setTimeout(() => {
         entry.target.style.opacity = '1';
-        entry.target.style.transform = entry.target.style.transform.replace('translateY(30px)', 'translateY(0)');
+        entry.target.style.transform = 'translateY(0)';
         entry.target.style.transition = 'opacity 0.5s ease, transform 0.5s ease, border-color 0.3s ease, box-shadow 0.3s ease';
       }, delay);
       revealObserver.unobserve(entry.target);
